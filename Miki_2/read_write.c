@@ -25,17 +25,17 @@ int opt;
 
 		case 's':
 			*subst_s=1;
-               		 break;
+               		break;
 		
 	       	case 'p':
                         *subst_p=1;
 			*position=strtol(optarg, NULL, 10);
-                         break;
+                        break;
 		
 		case 't':
 			*subst_t=1;
 			*trunc=strtol(optarg, NULL, 10);
-                         break;
+                        break;
 
 		default: 
                 printf ("You get wrong arguments, noob!");
@@ -95,7 +95,7 @@ printf("%s", c);
 
 if (subst_p)
 {
-	lseek(fd2,SEEK_SET,position);
+	lseek(fd2,position,SEEK_SET);
 }
 
 write (fd2, c, noBytes); //wczytanie do nowego pliku z bufora, de facto kopiowanie
@@ -115,4 +115,5 @@ ftruncate(fd2, trunc);
         }
 
         return 0;
+	////////
 }
