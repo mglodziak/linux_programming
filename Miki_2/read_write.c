@@ -115,5 +115,5 @@ ftruncate(fd2, trunc);
         }
 
         return 0;
-	////////
+	
 }
