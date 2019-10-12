@@ -4,10 +4,10 @@
 #include <fcntl.h>
 
 
-void get_args(char** out, char** in, int* noBytes, int* subst_s, int* subst_p,int* subst_t,int* argc, char** argv[], int* err, int *trunc, int* position)
+void get_args(char** out, char** in, int* noBytes, int* subst_s, int* subst_p,int* subst_t,int* argc, char** argv[], int* err, int *trunc, int* position, int* help)
 {
 int opt;
-	while ((opt=getopt(*argc, *argv, "o:i:n:p:t:s")) != -1)
+	while ((opt=getopt(*argc, *argv, "o:i:n:p:t:sh")) != -1)
 	{
 	switch (opt)
 		{
@@ -36,9 +36,14 @@ int opt;
 			*subst_t=1;
 			*trunc=strtol(optarg, NULL, 10);
                         break;
+		case 'h':
+                        *help=1;
+                        break;
+
+
 
 		default: 
-                printf ("You get wrong arguments, noob!");
+                printf ("You get wrong arguments, noob! Type ./start -h\n");
 		exit(EXIT_FAILURE);
 
 		}
@@ -46,14 +51,21 @@ int opt;
 
 }
 
+void print_help()
+{
+printf("This command copy bytes from input file to output file.\n\n Options:\n\n");
+printf("<-i> <file_name>: input file, file must exist.\n");
+printf("<-o> <file_name>: output file, if file doesn't exit, will be created. \n");
+printf("<-n> <number>: number of bytes to copy.\n");
+printf("[-s]: substitution output file (without -s), or not (with -s)\n");
+printf("[-p] <number>: position in output file to start writing\n");
+printf("[-t] <number>: size of output file\n");
+printf("[-p] <number>: help\n");
+}
+
 int main(int argc, char* argv[])
 {
 
-	if (argc<3)
-	{
-	printf ("Wrong numbers of arguments");
-	return 1;
-	}
 
 
 char* out ="\0"; //wskaźnik na string, nazwę pliku wyjściowego
@@ -65,15 +77,30 @@ int subst_t = 0;
 int err=1;
 int trunc=0;
 int position=0;
+int help=0;
 
-get_args(&out, &in, &noBytes, &subst_s, &subst_p, &subst_t, &argc, &argv, &err, &trunc, &position); //pobranie argumentów
+get_args(&out, &in, &noBytes, &subst_s, &subst_p, &subst_t, &argc, &argv, &err, &trunc, &position, &help); //pobranie argumentów
 //printf("input: %s\t output: %s\t noBytes: %d\n", in, out, noBytes);
 
 //open returns file descriptors jak chuj!!
 
+if (help)
+{
+print_help();
+exit(1);
+}
+
+    if (argc<3)
+        {
+        printf ("Wrong numbers of arguments. Type ./start -h\n");
+        return 1;
+        }
+
+
+
 if (err)
 {
-printf("Missing n argument!");
+printf("Missing n argument! Type ./start -h\n");
 exit(1);
 }
 	
@@ -105,12 +132,12 @@ ftruncate(fd2, trunc);
 }
   if(close(fd1) < 0)
         {
-                perror("c1");
+                perror("c1, type ./start -h\n");
                 exit(1);
         }
         if(close(fd2) < 0)
         {
-                perror("c2");
+                perror("c2, type ./start -h\n");
                 exit(1);
         }
 
