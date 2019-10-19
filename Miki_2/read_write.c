@@ -60,7 +60,7 @@ printf("<-n> <number>: number of bytes to copy.\n");
 printf("[-s]: substitution output file (without -s), or not (with -s)\n");
 printf("[-p] <number>: position in output file to start writing\n");
 printf("[-t] <number>: size of output file\n");
-printf("[-p] <number>: help\n");
+printf("[-h]: help\n");
 }
 
 int main(int argc, char* argv[])
@@ -82,7 +82,7 @@ int help=0;
 get_args(&out, &in, &noBytes, &subst_s, &subst_p, &subst_t, &argc, &argv, &err, &trunc, &position, &help); //pobranie argumentów
 //printf("input: %s\t output: %s\t noBytes: %d\n", in, out, noBytes);
 
-//open returns file descriptors jak chuj!!
+
 
 if (help)
 {
@@ -112,11 +112,11 @@ if (subst_s)
                 fd2 = open(out, O_CREAT|O_WRONLY, 0666); //tylko zapis
         }
         else {
-                fd2 = open(out, O_CREAT |O_WRONLY | O_TRUNC, 0666); //wydupc wszystko i zapisz nowe
+                fd2 = open(out, O_CREAT |O_WRONLY | O_TRUNC, 0666); //wazne, uprawnienia!
         }
 
 
-char* c = (char*)calloc(100,sizeof(char)); //tu tworzę jakiś bufor, do którego wdupcam dane
+char* c = (char*)calloc(100,sizeof(char)); //tu tworzę bufor
 read(fd1, c, noBytes); //wczytanie do bufora
 printf("%s", c);
 
