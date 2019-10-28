@@ -4,19 +4,14 @@
 #include <unistd.h>
 
 
-void dupa(int arg1, void* arg2)
+void end(int arg1, void* arg2)
 {
 printf("file exit, some data is writing.. \n");
 
-//char* c = (char*)calloc(100,sizeof(char));
-//c="dupa";
-//int noBytes =10;
-//write(arg1, c, noBytes);
-//free(c);
+unsigned int* x = (unsigned int*)arg2;
 
-//close(arg1);
-
-if (close(arg2)) printf("zjebałeś zamykanie\n");
+if (close(*x)) printf("zjebałeś zamykanie\n");
+free(arg2);
 
 }
 
@@ -25,10 +20,12 @@ int main(int argc, char* argv[])
 {
 	for (int i=1; i<argc; i++)
 	{
-		int fd=open(argv[i],O_CREAT|O_WRONLY|O_EXCL,0666);
-		if (fd!=-1)
+		unsigned int* fd = (unsigned*)malloc(sizeof(int)); 
+		*fd=open(argv[i],O_CREAT|O_WRONLY|O_EXCL,0666);
+
+		if (*fd!=-1)
 		{
-			on_exit(dupa,(void*)fd);
+			on_exit(end,(void*)fd);
 
 		}
 		else 
