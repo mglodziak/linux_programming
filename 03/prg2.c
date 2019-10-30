@@ -10,7 +10,7 @@ printf("file exit, some data is writing.. \n");
 
 unsigned int* x = (unsigned int*)arg2;
 
-if (close(*x)) printf("zjebałeś zamykanie\n");
+if (close(*x)) printf("zamykanie się zepsulo.\n");
 free(arg2);
 
 }
