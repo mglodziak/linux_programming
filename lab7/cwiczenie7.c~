@@ -65,7 +65,7 @@ if (!(argc-optind==1 || argc-optind==2))
 {
 	printf("Error number of parameters!!");
 	return -4;
-
+}
 printf("%s\n",argv[optind]);
 
 printf("%f",size);

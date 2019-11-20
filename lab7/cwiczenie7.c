@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
 				break;
 			default:
 				printf("invalid flags, bye.");
+				return -10;
 		}
 	}
 
