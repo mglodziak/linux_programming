@@ -5,12 +5,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 
 
 int main(int argc, char* argv[])
 {
 	char c;
-	float size = 50;
+	float size = 10;
 	int fd_in;
 	int fd_out;
 	int sz;
@@ -71,5 +72,79 @@ printf("%s\n",argv[optind]);
 
 printf("%f",size);
 printf("\n\nOK\n\n");
+
+
+fd_in=open(argv[optind],O_RDONLY); //RONLY??
+if (fd_in==-1)
+{
+	printf("error opening file");
+	return -11;
+}
+printf("In: %d \n", fd_in);
+
+if (argc-optind==2)
+{
+fd_out=open(argv[optind+1],O_WRONLY);
+
+        if (fd_out==-1)
+        {
+                printf("Error with output file");
+                return -12;
+        }
+printf("Out: %d \n", fd_out);
+}
+
+
+
+//######################
+if(tryb==1)
+{
+if (argc-optind==2) //jeśli podany plik wynikowy
+{
+        fd_out=open(argv[optind+1],O_WRONLY);
+
+        if (fd_out==-1)
+	{
+                printf("Error with output file");
+                return -12;
+        }
+	char* buf = (char*)calloc(1,sizeof(char));
+	int i=0; //pozycja w wyjściowym pliku	
+	int licznik=0;
+	while(1)	
+	{
+		int j=0;
+		char* buf2= (char*)calloc(size,sizeof(char));
+		lseek(fd_out,licznik*size, SEEK_SET);
+		while (j<size)
+		{
+			lseek(fd_in,i,SEEK_SET);
+			read(fd_in, buf, 1);
+			if (buf[0]=='\n')
+			{
+				i++;
+				j++;
+				break;
+			}
+			else
+			{
+			strcat(buf2,buf);	
+			//printf("Lseek: %s \n", buf);
+			i++;
+			j++;
+			}
+		}
+	licznik++;
+	write(fd_out, buf2,size); //wsadzic do pliku	
+	free(buf2);
+	if (read(fd_in, buf,1)==0) // warunek przerwania
+        break; //warunek wyjscia z pętli
+	}
+}
+}
+if(tryb==2)
+{
+//xd
+}
 return 0;
 }
