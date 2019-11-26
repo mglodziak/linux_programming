@@ -82,7 +82,7 @@ if (fd_in==-1)
 }
 printf("In: %d \n", fd_in);
 
-/*
+
 if (argc-optind==2)
 {
 fd_out=open(argv[optind+1],O_CREAT|O_WRONLY, 0666);
@@ -94,14 +94,17 @@ fd_out=open(argv[optind+1],O_CREAT|O_WRONLY, 0666);
         }
 printf("Out: %d \n", fd_out);
 }
+else
+{
+fd_out = STDOUT_FILENO;
+}
 
-*/
 
-//######################
+//#####################
 if(tryb==1)
 {
 	
-if (argc-optind==2) //jeśli podany plik wynikowy
+/*if (argc-optind==2) //jeśli podany plik wynikowy
 {
         fd_out=open(argv[optind+1],O_CREAT|O_WRONLY, 0666);
 
@@ -111,7 +114,7 @@ if (argc-optind==2) //jeśli podany plik wynikowy
                 return -12;
         }
 	
-	
+*/	
 	//czytaj znak po znaku, jeśli read zwróci zero przerwij.
 	//ToDo
 	char* buf = (char*)calloc(1,sizeof(char)); // rozmiar pliku ma być
@@ -130,6 +133,7 @@ if (argc-optind==2) //jeśli podany plik wynikowy
 			{
 				i++;
 				j++;
+				strcat(buf2,buf);
 				break;
 			}
 			else
@@ -146,7 +150,7 @@ if (argc-optind==2) //jeśli podany plik wynikowy
 	if (read(fd_in, buf,1)==0) // warunek przerwania
         break; //warunek wyjscia z pętli
 	}
-}
+//}
 }
 
 
@@ -155,7 +159,7 @@ if (argc-optind==2) //jeśli podany plik wynikowy
 if(tryb==2)
 {
 
-if (argc-optind==2) //jeśli podany plik wynikowy
+/*if (argc-optind==2) //jeśli podany plik wynikowy
 {
         fd_out=open(argv[optind+1],O_CREAT|O_WRONLY, 0666);
 
@@ -165,41 +169,33 @@ if (argc-optind==2) //jeśli podany plik wynikowy
                 return -12;
         }
 
-
+*/
         char* buf = (char*)calloc(1,sizeof(char));
         int i=0; //pozycja w wyjściowym pliku   
-        int licznik=0;
+        int j=0; //pozycja w docelowym pliku
         while(1)
         {
-                int j=0;
-                char* buf2= (char*)calloc(size,sizeof(char));
-                lseek(fd_out,licznik*size, SEEK_SET);
-                while (j<size)
-                {
-                        lseek(fd_in,i,SEEK_SET);
-                        read(fd_in, buf, 1);
-                        if (buf[0]=='\n')
-                        {
-                                i++;
-                                j++;
-                                break;
-                        }
-                        else
-                        {
-                        strcat(buf2,buf);
-                        //printf("Lseek: %s \n", buf);
-                        i++;
+                lseek(fd_in,i,SEEK_SET);
+                lseek(fd_out,j, SEEK_SET);
+                read(fd_in, buf, 1);
+                if (buf[0]=='\0')
+		{
+			i++;
+		}
+		else
+		{
+                	i++;
                         j++;
-                        }
-                }
-        licznik++;
-        write(fd_out, buf2,size); //wsadzic do pliku    
-        free(buf2);
-        if (read(fd_in, buf,1)==0) // warunek przerwania
-        break; //warunek wyjscia z pętli
-
-
+                        printf("%s ",buf);
+		        write(fd_out, buf,1); //wsadzic do plikua	
+		        //free(buf2);
+		        if (read(fd_in, buf,1)=='0') // warunek przerwania
+			        break; //warunek wyjscia z pętli
+		}
+	}
+	free(buf);
 
 }
+//}
 return 0;
 }
