@@ -14,12 +14,12 @@ int main(int argc, char* argv[])
 	float size = 10;
 	int fd_in;
 	int fd_out;
-	int sz;
+	//int sz;
 	int tryb_x=0;
 	int tryb_z=0;
 	int tryb_n=0;
 	int tryb=0;
-	char *buff = (char*)calloc(100, sizeof(char));
+	//char *buff = (char*)calloc(100, sizeof(char));
 
 	while( (c = getopt(argc, argv, "zxN:")) != -1)
 	{
@@ -103,18 +103,6 @@ fd_out = STDOUT_FILENO;
 //#####################
 if(tryb==1)
 {
-	
-/*if (argc-optind==2) //jeśli podany plik wynikowy
-{
-        fd_out=open(argv[optind+1],O_CREAT|O_WRONLY, 0666);
-
-        if (fd_out==-1)
-	{
-                printf("Error with output file");
-                return -12;
-        }
-	
-*/	
 	//czytaj znak po znaku, jeśli read zwróci zero przerwij.
 	//ToDo
 	char* buf = (char*)calloc(1,sizeof(char)); // rozmiar pliku ma być
@@ -150,30 +138,17 @@ if(tryb==1)
 	if (read(fd_in, buf,1)==0) // warunek przerwania
         break; //warunek wyjscia z pętli
 	}
-//}
+	free(buf);
 }
-
 
 //##########################
 
 if(tryb==2)
 {
-
-/*if (argc-optind==2) //jeśli podany plik wynikowy
-{
-        fd_out=open(argv[optind+1],O_CREAT|O_WRONLY, 0666);
-
-        if (fd_out==-1)
-        {
-                printf("Error with output file");
-                return -12;
-        }
-
-*/
         char* buf = (char*)calloc(1,sizeof(char));
         int i=0; //pozycja w wyjściowym pliku   
         int j=0; //pozycja w docelowym pliku
-        while(1)
+        while(read(fd_in, buf,1)!=0)
         {
                 lseek(fd_in,i,SEEK_SET);
                 lseek(fd_out,j, SEEK_SET);
@@ -186,16 +161,11 @@ if(tryb==2)
 		{
                 	i++;
                         j++;
-                        printf("%s ",buf);
-		        write(fd_out, buf,1); //wsadzic do plikua	
-		        //free(buf2);
-		        if (read(fd_in, buf,1)=='0') // warunek przerwania
-			        break; //warunek wyjscia z pętli
+                       // printf("%s ",buf);
+		        write(fd_out, buf,1); //wsadzic do pliku	
 		}
 	}
 	free(buf);
-
 }
-//}
 return 0;
 }
