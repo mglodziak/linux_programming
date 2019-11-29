@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     int hp = 10;
 
     draw(hp);
-    printf("\n\nWaiting for an attack (ctrl + c) ...\n");
+    printf("\n\n\n\nHP: %d\n\nWaiting for an attack (ctrl + c) ...\n",hp*10);
 
     while(1)
     {
@@ -46,12 +46,12 @@ int main(int argc, char* argv[])
                     abort(); 
                 }  
                 draw(hp);
-                printf("\n\nAttack was successful :(\n\nWaiting for an attack (ctrl + c) ...\n");          
+                printf("\n\nAttack was successful :(\n\nHP: %d\n\nWaiting for an attack (ctrl + c) ...\n", hp*10);    
             }
             else
             {
                 draw(hp);
-                printf("\n\nYou've saved yourself!\n\nWaiting for an attack (ctrl + c) ...\n"); 
+                printf("\n\nYou've saved yourself!\n\nHP: %d\n\nWaiting for an attack (ctrl + c) ...\n",hp*10); 
             }
             flag = 0;
         }
