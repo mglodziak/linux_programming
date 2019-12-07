@@ -11,6 +11,7 @@ int main (int argc, char* argv[])
 //
 // rozdzielczość
 //
+printf("Rozdzielczosc zegarow\n\n");
 	if (!clock_getres(CLOCK_REALTIME, &time))
 	{
 		printf("CLOCK_REALTIME res: %ld.%09lds\n",time.tv_sec, time.tv_nsec);
@@ -96,17 +97,21 @@ int main (int argc, char* argv[])
 
 printf("\n\n");
 
+
+
 //opóźnienie nanosleepa
 struct timespec t1;
 struct timespec t2;
+/*
 struct timespec ref={1,0};
 clock_gettime(CLOCK_REALTIME, &t1);
 nanosleep(&ref,NULL);
 clock_gettime(CLOCK_REALTIME, &t2);
 printf("%li\n",t2.tv_nsec-t1.tv_nsec);
+*/
 
 printf("\n########\n");
-printf("opóźnienia zegarów");
+printf("opóźnienia zegarów - srednia ze 100 pomiarow");
 printf("\n########\n\n");
 
 int opoznienie=0;
