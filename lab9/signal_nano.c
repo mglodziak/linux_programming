@@ -4,11 +4,15 @@
 #include <signal.h>
 
 #define ILOSC_POMIAROW 5
+j=1.0
 
 void obsluga_sigusr1(int numer) 
 {
-	puts("Dostalem sygnal SIGUSR1");
+	puts("Dostalem sygnal SIGUSR1, powtarzam nanosleepa");
 }
+
+
+
 
 int main (int argc, char* argv[])
 {
@@ -26,7 +30,7 @@ printf("\n########\n");
 printf("opóźnienia nanosleepa - srednia z %d pomiarow",ILOSC_POMIAROW);
 printf("\n########\n\n");
 
-for (double j=1.0;j<3.1;j+=0.5)
+for ( j=1.0;j<3.1;j+=0.5)
 {
 struct timespec ref={j,0};
 
