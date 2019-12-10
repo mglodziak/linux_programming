@@ -4,11 +4,13 @@
 #include <signal.h>
 
 #define ILOSC_POMIAROW 5
-j=1.0
+double j=1.0;
 
 void obsluga_sigusr1(int numer) 
 {
 	puts("Dostalem sygnal SIGUSR1, powtarzam nanosleepa");
+	struct timespec ref={j,0};
+	nanosleep(&ref,NULL);
 }
 
 
