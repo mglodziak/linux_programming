@@ -18,7 +18,7 @@ function no_ctrlc()
 
 function ignore_sigusr1()
 {
-echo "Ignoring SIGUSR1" #ignorować, a nie obsługiwać! 
+echo "Ignoring SIGUSR1"
 }
 
 function time_usr2()
