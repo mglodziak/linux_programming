@@ -12,6 +12,12 @@
 #define TIMER_SIG SIGHUP
 #define CLOCK_ID CLOCK_REALTIME
 
+/*
+void thread_handler(union sigval sv) 
+{
+printf("dupa, co 5 sekund\n");
+}
+*/
 
 static void handler(int signal);
 int flaga = 0;
@@ -19,9 +25,9 @@ int flaga = 0;
 int main(int argc, char *argv[])
 {
 
-	char *file_dane = NULL;
-	char *file_tablica = NULL;
-	char *file_archiwum = NULL;
+	char *file_dane = "\0";
+	char *file_tablica = "\0";
+	char *file_archiwum = "\0";
 	int do_przekazania = 5;
 	int c;
 
@@ -95,6 +101,12 @@ int main(int argc, char *argv[])
 		printf("Coś poszło nie tak... fd_archiwum. Prawdopodobnie plik już istnieje.\n");
 		return -3;
 	}
+	/*
+printf("%s\n",file_dane); 
+printf("%s\n",file_tablica);
+printf("%s\n",file_archiwum);
+printf("%d\n",do_przekazania);
+*/
 
 	char *buf1 = (char *)calloc(1, sizeof(char));
 	int licznik = 0;
@@ -103,7 +115,11 @@ int main(int argc, char *argv[])
 		if (buf1[0] == '\n')
 			licznik++;
 
+		//printf("%s", buf1);
 	}
+	//printf("Licznik:%d \n", licznik);
+
+	//char ** dane[licznik];
 
 	int offsety[licznik + 1];
 	offsety[0] = 0;
@@ -126,6 +142,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	//printf("\n\n");
+	//for (int j=0; j<licznik+1; j++)
+	//	printf("%d \n", offsety[j]);
+
 	lseek(fd_dane, 0, SEEK_SET);
 
 	char *dane[licznik];
@@ -139,6 +159,10 @@ int main(int argc, char *argv[])
 		dane[i] = buf33;
 		ix_offset++;
 	}
+	//printf("%s\n", dane[1]);
+
+	//for (int i =0; i< licznik; i++)
+	//printf("%d\t%s\n",offsety[i],dane[i]);
 
 	dzieciaczki = (pid_t *)malloc(sizeof(pid_t) * licznik);
 	if (dzieciaczki == NULL)
@@ -184,9 +208,13 @@ int main(int argc, char *argv[])
 		return -4;
 	}
 
+	//	char *info = "5 seconds elapsed.";
 	timer_t timerid;
 	struct sigevent sev;
 	struct itimerspec trigger;
+
+	//        memset(&sev, 0, sizeof(struct sigevent));
+	//        memset(&trigger, 0, sizeof(struct itimerspec));
 
 	sev.sigev_notify = SIGEV_SIGNAL;
 	sev.sigev_signo = TIMER_SIG;
@@ -235,6 +263,7 @@ int main(int argc, char *argv[])
 			}
 			while ((wczytane = read(fd_tablica2, xx, 1)) > 0)
 			{
+				//printf("-\n");
 				write(fd_archiwum, xx, 1);
 			}
 			if (close(fd_tablica) < 0)
@@ -244,6 +273,7 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+	//       sleep(15);
 
 	kill(-getpgid(dzieciaczki[0]), SIGTERM);
 
@@ -263,7 +293,7 @@ int main(int argc, char *argv[])
 
 	free(buf1);
 	free(buf);
-	free(dzieciaczki);
+
 	return 0;
 }
 
