@@ -1,0 +1,27 @@
+pipey i fify, bardzo ciekawe jest w nich zdolnosc do synchronizacji.
+pipey sie stosuje do synchronizacji, od strony uzytkownika algorytm jest
+prosty.
+
+odczyt z pustej rury konczy sie
+
+rodzic i n potomkow, miedzy nimi jest 1 pipe,
+rodzic ma jedna strone a wielu potomkow ma dwie strony, czyli niestety tracimy
+zdolnosci synchronizacji.
+potomkowie maja tego sasmego pipea od obu stron, czyli w niektorych
+przypadkach synchro nie zadziala,
+rodzic pomimo tego obsluguje sygnal sigchild po to zeby wypisywac wszystkie
+zmiany zachodzace w potomkach (czy zabity czy zasnal itd)
+
+od strony rodzica co jakis czas, budzik dzwoni i kazdy dzwonek to jest
+wyslanie jednego bajta do potoku, odstepy miedzy kolejnymi jest z zakresu od 1
+do n(ilosc potomkow, parametr zadany), wrzucany jest jeden bajt a po chwili
+nastepny itd, trzeba zdazyc odczytac co sie tam dzieje
+do tego dojdzie obsluga sygnalow przez rodzica
+
+potomkowie - czekaja na wyjsciu potoku, jak zlapie bajta to odgryzie z niego
+jednostke i wrzuca z powrotem do potoku, jak zlapie bajta o wartosci 0 to go
+konsumuje,
+druga czynnosc to pobieranie znacznikow czasu i wypisanie swoje pidu i swojego
+znaczniku czasu w zasadzie mozna jeszcze (rodzic przez wrzuceniem bajtu
+wypisuje znacznik[Ja rodzic taki i taki karmie tym])
+
