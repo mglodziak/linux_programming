@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 
 #define FI "./FI"
@@ -16,7 +17,7 @@ int FI_fd;
 int FO_fd;
 
 
-
+/*
 void close_fd()
 {
     if (close(FI_fd)==-1)
@@ -31,7 +32,7 @@ void close_fd()
     }
     return ;
 }
-
+*/
 
 int main(int argc, char* argv[])
 {
@@ -50,9 +51,7 @@ int main(int argc, char* argv[])
     }
     printf("Fo created\n");
     
-    FI_fd=open(FI, O_WRONLY);
-       
-    printf("CHUIJ");
+    FI_fd=open(FI, O_RDONLY);
     if (FI_fd==-1)
     {
         perror("Opening FI\n");
@@ -61,16 +60,31 @@ int main(int argc, char* argv[])
     printf("Fi opened\n");
     
     
-    
-    FO_fd=open(FI, O_RDONLY);
+    FO_fd=open(FI, O_WRONLY);
     if (FO_fd==-1)
     {
         perror("Opening FO\n");
         return -2;
     }
-    printf("Fo opd\n");
+    printf("Fo opened\n");
     
-    atexit(close_fd);
+    struct timespec time;
+    time.tv_sec=1;
+    time.tv_nsec=0;
+    
+    while(1)
+    {
+     if (write(FO_fd, "1", 1)==-1)
+     {
+      perror("Writing FO err");
+      return -3;
+      
+     }
+     nanosleep(&time, NULL);
+     
+    }
+    
+//    atexit(close_fd);
     
     return 0;
 }
