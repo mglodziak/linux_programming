@@ -13,25 +13,30 @@
 #define FI "./FI"
 #define FO "./FO"
 
+#define ZAKRES 5
+
 int FI_fd;
 int FO_fd;
 
-
 /*
-void close_fd()
-{
-    if (close(FI_fd)==-1)
-    {
-        perror("Closing FI\n");
-        return ;
-    }
-    if (close(FO_fd)==-1)
-    {
-        perror("Closing FO\n");
-        return ;
-    }
-    return ;
-}
+
+  void close_fd()
+  {
+     if (close(FI_fd)==-1)
+     {
+         perror("Closing FI\n");
+         return ;
+     }
+     if (close(FO_fd)==-1)
+     {
+         perror("Closing FO\n");
+         return ;
+     }
+     return ;
+    unlink(FI);
+    unlink(FO);
+  }
+
 */
 
 int main(int argc, char* argv[])
@@ -60,7 +65,7 @@ int main(int argc, char* argv[])
     printf("Fi opened\n");
     
     
-    FO_fd=open(FI, O_WRONLY);
+    FO_fd=open(FI, O_RDWR | O_NONBLOCK);
     if (FO_fd==-1)
     {
         perror("Opening FO\n");
@@ -68,23 +73,48 @@ int main(int argc, char* argv[])
     }
     printf("Fo opened\n");
     
-    struct timespec time;
-    time.tv_sec=1;
-    time.tv_nsec=0;
+    struct timespec time_struct;
+    time_struct.tv_sec=1;
+    time_struct.tv_nsec=0;
     
+    int random;
+    char *c=(char*)malloc(sizeof(char));
+        
     while(1)
     {
-     if (write(FO_fd, "1", 1)==-1)
-     {
-      perror("Writing FO err");
-      return -3;
-      
-     }
-     nanosleep(&time, NULL);
-     
+        if (read(FO_fd,c,1)<=0)
+        {
+        srand(time(0));
+        random=rand()%ZAKRES+2;
+        printf("%d\n", random);
+        for (int i =0; i<random ; i++)
+        {
+            if (write(FO_fd, "1", 1)==-1)
+            {
+                perror("Writing FO err");
+                return -3;
+                
+            }
+            
+        }
+        nanosleep(&time_struct, NULL);
+        }
+        else 
+        {
+            if (write(FO_fd, "1", 1)==-1)
+            {
+                perror("Writing FO err");
+                return -3;
+                
+            }
+            nanosleep(&time_struct, NULL);
+            continue;
+        }
+        
     }
     
-//    atexit(close_fd);
+       // atexit(close_fd);
     
+    free(c);
     return 0;
 }
