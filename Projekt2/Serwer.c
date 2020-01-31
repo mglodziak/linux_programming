@@ -12,32 +12,36 @@
 
 #define FI "./FI"
 #define FO "./FO"
-
+#define TIMER_SIG SIGHUP
+#define CLOCK_ID CLOCK_REALTIME
 #define ZAKRES 5
+
+static void handler(int signal);
+int flag = 0;
 
 int FI_fd;
 int FO_fd;
 
 /*
-
-  void close_fd()
-  {
-     if (close(FI_fd)==-1)
-     {
-         perror("Closing FI\n");
-         return ;
-     }
-     if (close(FO_fd)==-1)
-     {
-         perror("Closing FO\n");
-         return ;
-     }
-     return ;
-    unlink(FI);
-    unlink(FO);
-  }
-
-*/
+ * 
+ * void close_fd()
+ * {
+ *    if (close(FI_fd)==-1)
+ *    {
+ *        perror("Closing FI\n");
+ *        return ;
+ *    }
+ *    if (close(FO_fd)==-1)
+ *    {
+ *        perror("Closing FO\n");
+ *        return ;
+ *    }
+ *    return ;
+ *   unlink(FI);
+ *   unlink(FO);
+ * }
+ * 
+ */
 
 int main(int argc, char* argv[])
 {
@@ -73,48 +77,77 @@ int main(int argc, char* argv[])
     }
     printf("Fo opened\n");
     
-    struct timespec time_struct;
-    time_struct.tv_sec=1;
-    time_struct.tv_nsec=0;
+    struct sigaction sa;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sa.sa_handler = handler;
+    if (sigaction(TIMER_SIG, &sa, NULL) == -1)
+    {
+        perror("signal");
+        _exit(EXIT_FAILURE);
+    }
+    
+    timer_t timerid;
+    struct sigevent sev;
+    struct itimerspec trigger;
+    
+    sev.sigev_notify = SIGEV_SIGNAL;
+    sev.sigev_signo = TIMER_SIG;
+    trigger.it_value.tv_sec = 1;
+    trigger.it_value.tv_nsec = 0;
+    trigger.it_interval.tv_sec = 1;
+    trigger.it_interval.tv_nsec = 0;
+    if (timer_create(CLOCK_ID, &sev, &timerid) < 0)
+    {
+        perror("timer_create");
+        return -11;
+    }
     
     int random;
     char *c=(char*)malloc(sizeof(char));
-        
+    
     while(1)
     {
-        if (read(FO_fd,c,1)<=0)
+        if (timer_settime(timerid, 0, &trigger, NULL))
         {
-        srand(time(0));
-        random=rand()%ZAKRES+2;
-        printf("%d\n", random);
-        for (int i =0; i<random ; i++)
+            perror("timer");
+            return -12;
+        }
+        pause();
+        if (flag)
         {
-            if (write(FO_fd, "1", 1)==-1)
+            if (read(FO_fd,c,1)<=0)
             {
-                perror("Writing FO err");
-                return -3;
-                
+                srand(time(0));
+                random=rand()%ZAKRES+2;
+                printf("%d\n", random);
+                for (int i =0; i<random ; i++)
+                {
+                    if (write(FO_fd, "1", 1)==-1)
+                    {
+                        perror("Writing FO err");
+                        return -3;
+                        
+                    }
+                    
+                }
             }
-            
-        }
-        nanosleep(&time_struct, NULL);
-        }
-        else 
-        {
-            if (write(FO_fd, "1", 1)==-1)
+            else 
             {
-                perror("Writing FO err");
-                return -3;
-                
+                continue;
             }
-            nanosleep(&time_struct, NULL);
-            continue;
         }
-        
+        flag=0;
     }
     
-       // atexit(close_fd);
+    // atexit(close_fd);
     
     free(c);
     return 0;
+}
+
+
+static void handler(int signal)
+{
+    flag = 1;
 }
