@@ -141,6 +141,25 @@ int main(int argc, char* argv[])
             }
         }
         flag=0;
+        
+        char sss[10];
+        int read_returns=read(FI_fd, sss, 9);
+          if (read_returns==0)
+                continue;
+            
+            if (read_returns==-1)
+            {
+                if (errno==EINTR)
+                    continue;
+                
+                else
+                {
+                    perror("reading FO");
+                    exit(EXIT_FAILURE);
+                }
+            }
+            printf("\nsss: %s\n", sss);
+        
     }
     
     // atexit(close_fd);

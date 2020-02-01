@@ -168,7 +168,30 @@ int main(int argc, char* argv[])
             
             if (count_of_children >=3)
             {
-                printf("Mam 3 potomków\n");
+                printf("\n\nMam 3 potomków\n");
+                pid_t rodzic;
+                pid_t grupa;
+                rodzic=getpid();
+                grupa=getpgid(rodzic);
+                printf("rodzic: %d, grupa: %d\n",rodzic, grupa);
+              
+                char str_r[5];
+                char str_g[5];
+                char * buf = (char*)malloc(2+strlen(str_g)+strlen(str_r));
+                sprintf(str_r, "%d",rodzic);
+                sprintf(str_g, "%d",grupa);
+                strcpy(buf, str_r);
+                strcat(buf, "X");
+                strcat(buf, str_g);
+                
+                printf("buf: %s\n\n", buf);
+                if (write(FI_fd, buf, strlen(buf))==-1)
+                     {
+                        perror("Writing FI err");
+                        return -5;
+                        
+                    }
+                free(buf);
             }
             
         }
