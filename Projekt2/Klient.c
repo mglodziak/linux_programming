@@ -77,8 +77,8 @@ int main(int argc, char* argv[])
     sev.sigev_signo = TIMER_SIG;
     trigger.it_value.tv_sec = 1;
     trigger.it_value.tv_nsec = 0;
-    trigger.it_interval.tv_sec = 0;
-    trigger.it_interval.tv_nsec = 500000000;
+    trigger.it_interval.tv_sec = 1;
+    trigger.it_interval.tv_nsec = 0;
     if (timer_create(CLOCK_ID, &sev, &timerid) < 0)
     {
         perror("timer_create");
@@ -97,9 +97,11 @@ int main(int argc, char* argv[])
         perror("timer");
         return -12;
     }
-        pause();
+    pause();
     
-        int count_of_children=0;
+    int count_of_children=0;
+    pid_t ppid;
+    char str[10];
     while(1)
     {
         
@@ -134,18 +136,39 @@ int main(int argc, char* argv[])
                 }
                 else if (child_pid==0)
                 {
-                
-                printf("I am child process my ID is   =  %d\n" , getpid());
-                
-
+                    
+                    printf("I am child process my ID is   =  %d\n" , getpid());
+                    
                 }
-            }
-            
+                ppid=getpid();
+                
+                sprintf(str, "%d",ppid);
+                
+                if(count_of_children==1)
+                {
+                    setenv("PID_GROUP",str,0);
+                    setpgid(ppid, ppid);
+                }
+                else
+                {
+                    char * pid_return=getenv("PID_GROUP");
+                    int pid_ret=strtol(pid_return,NULL, 10);
+                    setpgid(ppid, pid_ret);
+                    
+                }
+                pid_t dupa = getpgid(ppid);
+                printf ("GPID: %d\n",dupa);
+                
+            }            
+            char* dupa= getenv("PID_GROUP");
             printf("No children: %d\n", count_of_children);
+            printf("PD: %s\n", dupa);
+            
+            
             
             if (count_of_children >=3)
             {
-             printf("Mam 3 potomków\n");   
+                printf("Mam 3 potomków\n");
             }
             
         }

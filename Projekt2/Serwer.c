@@ -14,7 +14,7 @@
 #define FO "./FO"
 #define TIMER_SIG SIGHUP
 #define CLOCK_ID CLOCK_REALTIME
-#define ZAKRES 1
+#define ZAKRES 5
 
 static void handler(int signal);
 int flag = 0;
