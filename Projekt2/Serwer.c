@@ -14,7 +14,7 @@
 #define FO "./FO"
 #define TIMER_SIG SIGHUP
 #define CLOCK_ID CLOCK_REALTIME
-#define ZAKRES 5
+#define ZAKRES 1
 
 static void handler(int signal);
 int flag = 0;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     printf("Fi opened\n");
     
     
-    FO_fd=open(FI, O_RDWR | O_NONBLOCK);
+    FO_fd=open(FO, O_RDWR | O_NONBLOCK);
     if (FO_fd==-1)
     {
         perror("Opening FO\n");
@@ -116,10 +116,13 @@ int main(int argc, char* argv[])
         pause();
         if (flag)
         {
+            
+            printf("%ld\n",read(FO_fd,c,1));
             if (read(FO_fd,c,1)<=0)
             {
+              
                 srand(time(0));
-                random=rand()%ZAKRES+2;
+                random=rand()%ZAKRES+1;
                 printf("%d\n", random);
                 for (int i =0; i<random ; i++)
                 {
